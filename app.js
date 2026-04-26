@@ -40,8 +40,9 @@ const defaultState = {
     double: false,
     auto: false
   },
-  bossUnlocked: false
+  bossMode: false
 };
+
 const skills = {
   doubleCats: false,
   autoCollector: false
@@ -79,11 +80,11 @@ function addCat(amount = 1) {
 
   game.points += amount * multiplier;
 
-  saveGame();
+  updateBossState(); // 👈 ONLY HERE
 
+  saveGame();
   updateUI();
   updateProgress();
-  checkBoss(); // 🔥 critical
 }
 
 function updateUI() {
@@ -106,7 +107,7 @@ function updateUI() {
   // 🤖 Auto button reset when NOT running
   const autoBtn = document.getElementById("autoBtn");
   if (autoBtn && !autoInterval) {
-    autoBtn.textContent = "Start Auto Cats";
+    autoBtn.textContent = "Auto Cats Paused";
   }
 }
 
@@ -231,29 +232,25 @@ function importSave() {
   updateProgress();
 }
 
-function checkBoss() {
-  if (game.points >= 100 && !game.bossUnlocked) {
-    game.bossUnlocked = true;
+function updateBossState() {
+  if (game.points >= 100 && !game.bossMode) {
+    game.bossMode = true;
 
-    game.points += 1; // ✅ boss reward
+    loadBoss();
+  }
 
-    saveGame();
-    updateUI();
-    updateProgress();
-
-    document.getElementById("bossBtn").style.display = "inline-block";
+  if (game.points < 100) {
+    game.bossMode = false;
   }
 }
-
 function loadBoss() {
-  if (game.points < 100) return; // 🔒 BLOCK EARLY ACCESS
-
   load({
     name: "👑 CAT OVERLORD",
     color: "#100000",
     textColor: "#ff0000",
-    lore: "You have awakened the final cat entity.",
-    image: "images/boss.png"
+    lore: "Boss mode active.",
+    image: "images/boss.png",
+    sound: "sounds/boss.wav"
   });
 }
 
@@ -291,6 +288,8 @@ function collectCat(catName) {
 
 // 🌠 load universe
 function load(u) {
+  game.activeUniverse = u.name;
+  game.bossMode = false; // 👈 switching universe cancels boss
   portal();
   glitch();
 
@@ -300,7 +299,7 @@ function load(u) {
   title.textContent = "🐱 " + u.name;
   lore.textContent = u.lore;
   catImage.src = u.image;
-
+  game.activeUniverse = u.name;
   if (!game.collection.find(c => c.name === u.name)) {
   collectCat(u.name);
 }
@@ -378,16 +377,15 @@ btn.addEventListener("click", () => {
   index = (index + 1) % universes.length;
   const next = universes[index];
 
-  load(next);
+  game.activeUniverse = next.name; // 👈 IMPORTANT
 
-  updateUI();
-  updateProgress();
+  load(next);
 
   if (next.sound) {
     playSound(next.sound);
   }
 
-  checkBoss();
+  saveGame();
 });
 
 // secret universe unlock (press CATS)
@@ -408,7 +406,7 @@ document.addEventListener("keydown", (e) => {
       textColor: "#ff00ff",
       lore: "You unlocked the origin of all cats.",
       image: "images/cat5.png",
-      sound: null
+      sound: "sounds/secret.wav"
     });
 
     saveGame();
