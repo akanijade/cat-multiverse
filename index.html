@@ -16,8 +16,21 @@
     <img id="catImage" src="images/cat1.png" alt="cat" />
 
     <button id="btn">Switch Universe</button>
+    <div id="gallery">
+      <h3>🐾 Collected Cats</h3>
+      <div id="catList"></div>
+    </div>
+    
   </div>
 
   <script src="app.js"></script>
 </body>
+<script>
+  function updateGallery() {
+  const list = document.getElementById("catList");
+  list.innerHTML = collected.map(c => `<p>🐱 ${c}</p>`).join("");
+}
+
+setInterval(updateGallery, 1000);
+</script>
 </html>
