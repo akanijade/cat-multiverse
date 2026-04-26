@@ -179,12 +179,13 @@ function checkBoss() {
 
     document.getElementById("bossBtn").style.display = "inline-block";
 
-    loadBoss();
+    // DON'T auto force boss anymore
   }
 }
 
-
 function loadBoss() {
+  if (game.points < 100) return; // 🔥 BLOCK CHEAT ENTRY
+
   load({
     name: "👑 CAT OVERLORD",
     color: "#100000",
@@ -278,11 +279,11 @@ document.addEventListener("click", () => {
 
 
 function updateProgress() {
-  let percent = Math.min((cats / 100) * 100, 100);
+  let percent = Math.min((game.points / 100) * 100, 100);
 
   document.getElementById("progressBar").style.width = percent + "%";
   document.getElementById("progressText").textContent =
-    `Boss Progress: ${cats}/100`;
+    `Boss Progress: ${game.points}/100`;
 }
 
 function updateGallery() {
@@ -317,7 +318,8 @@ btn.addEventListener("click", () => {
 
   load(next);
 
-  updateUI(); // 🔥 IMPORTANT
+  updateUI();
+  updateProgress();
 
   if (next.sound) {
     playSound(next.sound);
@@ -325,6 +327,7 @@ btn.addEventListener("click", () => {
 
   checkBoss();
 });
+
 // secret universe unlock (press CATS)
 let buffer = "";
 
