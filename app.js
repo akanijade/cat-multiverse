@@ -38,9 +38,19 @@ const skills = {
   autoCollector: false
 };
 
+const rarities = [
+  { name: "Common", chance: 0.6 },
+  { name: "Rare", chance: 0.3 },
+  { name: "Epic", chance: 0.09 },
+  { name: "Legendary", chance: 0.01 }
+];
+
 let index = 0;
 let collected = JSON.parse(localStorage.getItem("cats")) || [];
 let cats = parseInt(localStorage.getItem("catPoints")) || 0;
+let doubleOwned = false;
+let autoOwned = false;
+let lastTime = localStorage.getItem("lastTime");
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -49,6 +59,7 @@ const btn = document.getElementById("btn");
 const app = document.getElementById("app");
 
 const audio = new Audio();
+
 
 if (cats > 50) {
   load({
@@ -69,6 +80,11 @@ function addCat(amount = 1) {
   cats += amount;
   localStorage.setItem("catPoints", cats);
   updateUI();
+  checkUnlocks();
+}
+
+function updateUI() {
+  document.getElementById("catCount").textContent = `🐱 Cats: ${cats}`;
 }
 
 function unlockDouble() {
@@ -77,6 +93,91 @@ function unlockDouble() {
   }
 }
 
+function buyDouble() {
+  if (cats >= 10) {
+    cats -= 10;
+    doubleOwned = true;
+    updateUI();
+  }
+}
+
+function buyAuto() {
+  if (cats >= 25) {
+    cats -= 25;
+    autoOwned = true;
+    setInterval(() => addCat(1), 2000);
+    updateUI();
+  }
+}
+
+function getRarity() {
+  let roll = Math.random();
+  let sum = 0;
+
+  for (let r of rarities) {
+    sum += r.chance;
+    if (roll < sum) return r.name;
+  }
+}
+console.log("You found a", getRarity(), "cat!");
+
+
+function calculateOffline() {
+  if (!lastTime) return;
+
+  let diff = Date.now() - lastTime;
+  let seconds = Math.floor(diff / 1000);
+
+  let earned = Math.floor(seconds * 0.2);
+  if (earned > 0) addCat(earned);
+}
+
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("lastTime", Date.now());
+});
+
+calculateOffline();
+
+
+function exportSave() {
+  const save = {
+    cats,
+    doubleOwned,
+    autoOwned
+  };
+
+  prompt("Copy your save:", btoa(JSON.stringify(save)));
+}
+
+
+function importSave() {
+  let data = prompt("Paste save code:");
+  if (!data) return;
+
+  let save = JSON.parse(atob(data));
+
+  cats = save.cats;
+  doubleOwned = save.doubleOwned;
+  autoOwned = save.autoOwned;
+
+  updateUI();
+}
+
+function checkUnlocks() {
+  if (cats > 100) {
+    loadBoss();
+  }
+}
+
+function loadBoss() {
+  load({
+    name: "👑 CAT OVERLORD",
+    color: "#100000",
+    textColor: "#ff0000",
+    lore: "You have awakened the final cat entity.",
+    image: "images/boss.png"
+  });
+}
 // function addCat() {
 //   cats += skills.doubleCats ? 2 : 1;
 // }
