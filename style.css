@@ -4,16 +4,17 @@ body {
   margin: 0;
   font-family: "Fredoka", Arial, sans-serif;
   min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
 }
 
 /* Main container */
 #app {
-  width: 100%;
-  min-height: 100vh;
-  padding: 40px;
-  border-radius: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(10px);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 /* Title */

@@ -308,7 +308,10 @@ function updateProgress() {
 
 function updateGallery() {
   const list = document.getElementById("catList");
-  list.innerHTML = collected.map(c => `<p>🐱 ${c}</p>`).join("");
+
+  list.innerHTML = collected
+    .map(c => `<p>🐱 ${c.name} (${c.rarity})</p>`)
+    .join("");
 }
 
 function resetGame() {
