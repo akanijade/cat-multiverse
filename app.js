@@ -5,7 +5,7 @@ const universes = [
     textColor: "#ffffff",
     lore: "Nebula Cat bends gravity with a meow.",
     image: "images/cat1.png",
-    sound: "sounds/space.mp3"
+    sound: "sounds/space.wav"
   },
   {
     name: "Cyber Cats",
@@ -13,7 +13,7 @@ const universes = [
     textColor: "#00ffcc",
     lore: "Hacker Cat controls the entire internet.",
     image: "images/cat2.png",
-    sound: "sounds/cyber.mp3"
+    sound: "sounds/cyber.wav"
   },
   {
     name: "Medieval Cats",
@@ -21,7 +21,7 @@ const universes = [
     textColor: "#fff3d6",
     lore: "Sir Whiskers defends Yarn Kingdom.",
     image: "images/cat3.png",
-    sound: "sounds/medieval.mp3"
+    sound: "sounds/medieval.wav"
   },
   {
     name: "Void Cats",
@@ -29,7 +29,7 @@ const universes = [
     textColor: "#ff4d4d",
     lore: "This cat should not exist.",
     image: "images/cat4.png",
-    sound: "sounds/void.mp3"
+    sound: "sounds/void.wav"
   }
 ];
 
