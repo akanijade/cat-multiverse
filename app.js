@@ -52,6 +52,14 @@ let doubleOwned = false;
 let autoOwned = false;
 let lastTime = localStorage.getItem("lastTime");
 let bossUnlocked = false;
+let autoInterval = null;
+
+let doubleOwned = JSON.parse(localStorage.getItem("doubleOwned")) || false;
+let autoOwned = JSON.parse(localStorage.getItem("autoOwned")) || false;
+
+if (autoOwned) {
+  autoInterval = setInterval(() => addCat(1), 2000);
+}
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -72,16 +80,15 @@ if (cats > 50) {
   });
 }
 
-// function addCat() {
-//   cats++;
-//   localStorage.setItem("catPoints", cats);
-//   updateUI();
-// }
+
 function addCat(amount = 1) {
-  cats += amount;
+  let multiplier = doubleOwned ? 2 : 1;
+  cats += amount * multiplier;
+
   localStorage.setItem("catPoints", cats);
   updateUI();
-  checkUnlocks();
+  checkBoss();
+  updateProgress();
 }
 
 function updateUI() {
@@ -95,18 +102,27 @@ function unlockDouble() {
 }
 
 function buyDouble() {
-  if (cats >= 10) {
+  if (cats >= 10 && !doubleOwned) {
     cats -= 10;
     doubleOwned = true;
+
+    localStorage.setItem("doubleOwned", true);
+
     updateUI();
   }
 }
 
+
+
 function buyAuto() {
-  if (cats >= 25) {
+  if (cats >= 25 && !autoOwned) {
     cats -= 25;
     autoOwned = true;
-    setInterval(() => addCat(1), 2000);
+
+    localStorage.setItem("autoOwned", true);
+
+    autoInterval = setInterval(() => addCat(1), 2000);
+
     updateUI();
   }
 }
@@ -275,7 +291,8 @@ btn.addEventListener("click", () => {
 //   load(universes[index]);
 // });
 btn.addEventListener("click", () => {
-  addCat(updateProgress);
+  addCat();
+  checkBoss(); // 🔥 ADD THIS
   index = (index + 1) % universes.length;
   load(universes[index]);
 });
