@@ -86,8 +86,11 @@ function addCat(amount = 1) {
 }
 
 function updateUI() {
+  document.getElementById("catCount").textContent =
+    `🐱 Cats: ${game.points}`;
+
   document.getElementById("bossBtn").style.display =
-  game.points >= 100 ? "inline-block" : "none";
+    game.points >= 100 ? "inline-block" : "none";
 }
 
 function unlockDouble() {
@@ -235,7 +238,9 @@ function load(u) {
   lore.textContent = u.lore;
   catImage.src = u.image;
 
+  if (!game.collection.find(c => c.name === u.name)) {
   collectCat(u.name);
+}
 }
 
 function playSound(src) {
@@ -312,13 +317,14 @@ btn.addEventListener("click", () => {
 
   load(next);
 
+  updateUI(); // 🔥 IMPORTANT
+
   if (next.sound) {
     playSound(next.sound);
   }
 
   checkBoss();
 });
-
 // secret universe unlock (press CATS)
 let buffer = "";
 
@@ -342,5 +348,10 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// start
-load(universes[index]);
+function initGame() {
+  load(universes[index]);
+  updateUI();
+  updateProgress();
+}
+
+initGame();
