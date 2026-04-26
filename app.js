@@ -51,6 +51,7 @@ let cats = parseInt(localStorage.getItem("catPoints")) || 0;
 let doubleOwned = false;
 let autoOwned = false;
 let lastTime = localStorage.getItem("lastTime");
+let bossUnlocked = false;
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -163,11 +164,18 @@ function importSave() {
   updateUI();
 }
 
-function checkUnlocks() {
-  if (cats > 100) {
+// function checkUnlocks() {
+//   if (cats > 100) {
+//     loadBoss();
+//   }
+// }
+function checkBoss() {
+  if (cats >= 100 && !bossUnlocked) {
+    bossUnlocked = true;
     loadBoss();
   }
 }
+
 
 function loadBoss() {
   load({
@@ -233,29 +241,41 @@ function load(u) {
   }
 }
 
-// const audio = new Audio();
-
 function playSound(src) {
   if (!src) return;
 
   audio.pause();
   audio.currentTime = 0;
   audio.src = src;
-
   audio.volume = 0.4;
 
-  audio.play().catch(() => {
-    console.log("Audio blocked until user interacts.");
-  });
+  const playPromise = audio.play();
+
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      console.log("🔇 Audio blocked until user interacts (click again).");
+    });
+  }
 }
 
+function updateProgress() {
+  let percent = Math.min((cats / 100) * 100, 100);
+
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").textContent =
+    `Boss Progress: ${cats}/100`;
+}
+
+btn.addEventListener("click", () => {
+  playSound(currentUniverse.sound);
+});
 // click
 // btn.addEventListener("click", () => {
 //   index = (index + 1) % universes.length;
 //   load(universes[index]);
 // });
 btn.addEventListener("click", () => {
-  addCat();
+  addCat(updateProgress);
   index = (index + 1) % universes.length;
   load(universes[index]);
 });

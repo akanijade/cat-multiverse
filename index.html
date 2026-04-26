@@ -15,22 +15,23 @@
 
     <img id="catImage" src="images/cat1.png" alt="cat" />
 
-    <!-- <button id="btn">Switch Universe</button> -->
     <button id="btn">Switch Universe (+1 🐱)</button>
     <div id="gallery">
       <h3>🐾 Collected Cats</h3>
       <div id="catList"></div>
-    <div id="companion">🐱</div>
-    <h2 id="catCount">🐱 Cats: 0</h2>
-    
-    <div id="shop">
-    <h3>🛒 Upgrade Shop</h3>
-    <button onclick="buyDouble()">Double Cats (10 🐱)</button>
-    <button onclick="buyAuto()">Auto Cats (25 🐱)</button>
+      <div id="companion">🐱</div>
+      <h2 id="catCount">🐱 Cats: 0</h2>
+      <div id="shop">
+          <h3>🛒 Upgrade Shop</h3>
+          <button onclick="buyDouble()">Double Cats (10 🐱)</button>
+          <button onclick="buyAuto()">Auto Cats (25 🐱)</button>
+      </div>
+      <button onclick="loadBoss()">👹 Revisit Boss</button>
+      <div id="progressContainer">
+        <div id="progressBar"></div>
+      </div>
+      <p id="progressText"></p>
     </div>
-    
-    </div>
-    
   </div>
 
   <script src="app.js"></script>
