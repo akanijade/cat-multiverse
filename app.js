@@ -373,7 +373,7 @@ function saveGame() {
 }
 
 btn.addEventListener("click", () => {
-  addCat();
+  
 
   index = (index + 1) % universes.length;
   const next = universes[index];
@@ -385,7 +385,7 @@ btn.addEventListener("click", () => {
   if (next.sound) {
     playSound(next.sound);
   }
-
+  addCat();
   saveGame();
 });
 
