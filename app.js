@@ -100,7 +100,6 @@ function buyDouble() {
 }
 
 
-
 function buyAuto() {
   if (cats >= 25 && !autoOwned) {
     cats -= 25;
@@ -108,10 +107,17 @@ function buyAuto() {
 
     localStorage.setItem("autoOwned", true);
 
-    autoInterval = setInterval(() => addCat(1), 2000);
+    if (!autoInterval) {
+      autoInterval = setInterval(() => addCat(1), 2000);
+    }
 
     updateUI();
   }
+}
+
+function stopAuto() {
+  clearInterval(autoInterval);
+  autoInterval = null;
 }
 
 function getRarity() {
@@ -187,6 +193,9 @@ function importSave() {
 function checkBoss() {
   if (cats >= 100 && !bossUnlocked) {
     bossUnlocked = true;
+
+    document.getElementById("bossBtn").style.display = "inline-block";
+
     loadBoss();
   }
 }
@@ -302,10 +311,15 @@ btn.addEventListener("click", () => {
 });
 
 // secret universe unlock (press CATS)
-let secretCode = "";
+let buffer = "";
+
 document.addEventListener("keydown", (e) => {
-  secretCode += e.key.toLowerCase();
-  if (secretCode.includes("Y2F0cw==")) {
+  if (e.key.length !== 1) return; // ignore Shift, Ctrl, etc.
+
+  buffer += e.key.toLowerCase();
+  buffer = buffer.slice(-10);
+
+  if (buffer.includes("cats")) {
     load({
       name: "⭐ GOD CAT REALM",
       color: "#1a001f",
@@ -314,7 +328,8 @@ document.addEventListener("keydown", (e) => {
       image: "images/cat5.png",
       sound: null
     });
-    secretCode = "";
+
+    buffer = "";
   }
 });
 

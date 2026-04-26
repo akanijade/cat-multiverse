@@ -26,7 +26,9 @@
           <button onclick="buyDouble()">Double Cats (10 🐱)</button>
           <button onclick="buyAuto()">Auto Cats (25 🐱)</button>
       </div>
-      <button onclick="loadBoss()">👹 Revisit Boss</button>
+      <button id="bossBtn" onclick="loadBoss()" style="display:none;">
+        👹 Revisit Boss
+      </button>
       <div id="progressContainer">
         <div id="progressBar"></div>
       </div>
@@ -34,6 +36,7 @@
       <button onclick="resetGame()">🗑 Reset Game</button>
       <button onclick="exportSave()">💾 Export Save</button>
       <button onclick="importSave()">📥 Import Save</button>
+      <button onclick="stopAuto()">Stop Auto</button>
     </div>
   </div>
 
