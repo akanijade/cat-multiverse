@@ -48,8 +48,6 @@ const rarities = [
 let index = 0;
 let collected = JSON.parse(localStorage.getItem("cats")) || [];
 let cats = parseInt(localStorage.getItem("catPoints")) || 0;
-let doubleOwned = false;
-let autoOwned = false;
 let lastTime = localStorage.getItem("lastTime");
 let bossUnlocked = false;
 let autoInterval = null;
@@ -70,15 +68,15 @@ const app = document.getElementById("app");
 const audio = new Audio();
 
 
-if (cats > 50) {
-  load({
-    name: "FINAL BOSS CAT",
-    color: "#200000",
-    textColor: "#ff0000",
-    lore: "You have awakened the Cat Overlord.",
-    image: "images/bosscat.png"
-  });
-}
+// if (cats > 50) {
+//   load({
+//     name: "FINAL BOSS CAT",
+//     color: "#200000",
+//     textColor: "#ff0000",
+//     lore: "You have awakened the Cat Overlord.",
+//     image: "images/bosscat.png"
+//   });
+// }
 
 
 function addCat(amount = 1) {
@@ -229,6 +227,7 @@ function collectCat(catName) {
   if (!collected.includes(catName)) {
     collected.push(catName);
     localStorage.setItem("cats", JSON.stringify(collected));
+    updateGallery(); // ✅ ADD THIS
   }
 }
 
@@ -282,14 +281,7 @@ function updateProgress() {
     `Boss Progress: ${cats}/100`;
 }
 
-btn.addEventListener("click", () => {
-  playSound(currentUniverse.sound);
-});
-// click
-// btn.addEventListener("click", () => {
-//   index = (index + 1) % universes.length;
-//   load(universes[index]);
-// });
+
 btn.addEventListener("click", () => {
   addCat();
   checkBoss(); // 🔥 ADD THIS
