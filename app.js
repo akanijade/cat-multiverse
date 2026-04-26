@@ -40,7 +40,8 @@ const defaultState = {
     double: false,
     auto: false
   },
-  bossMode: false
+  bossMode: false,
+  bossTriggered: false   // ✅ ADD THIS
 };
 
 const skills = {
@@ -71,8 +72,8 @@ const app = document.getElementById("app");
 
 const audio = new Audio();
 
-if (game.upgrades.auto) {
-  autoInterval = setInterval(() => addCat(1), 2000);
+if (game.upgrades.auto && !autoInterval) {
+  startAuto();
 }
 
 function addCat(amount = 1) {
@@ -233,14 +234,10 @@ function importSave() {
 }
 
 function updateBossState() {
-  if (game.points >= 100 && !game.bossMode) {
+  if (game.points >= 100 && !game.bossTriggered) {
+    game.bossTriggered = true;
     game.bossMode = true;
-
     loadBoss();
-  }
-
-  if (game.points < 100) {
-    game.bossMode = false;
   }
 }
 function loadBoss() {
@@ -288,8 +285,10 @@ function collectCat(catName) {
 
 // 🌠 load universe
 function load(u) {
+  game.bossMode = false;
+  game.bossTriggered = false; // ✅ ADD HERE
+
   game.activeUniverse = u.name;
-  game.bossMode = false; // 👈 switching universe cancels boss
   portal();
   glitch();
 
@@ -299,10 +298,10 @@ function load(u) {
   title.textContent = "🐱 " + u.name;
   lore.textContent = u.lore;
   catImage.src = u.image;
-  game.activeUniverse = u.name;
+
   if (!game.collection.find(c => c.name === u.name)) {
-  collectCat(u.name);
-}
+    collectCat(u.name);
+  }
 }
 
 function playSound(src) {
@@ -359,6 +358,11 @@ function resetGame() {
   if (!confirm("Reset EVERYTHING?")) return;
 
   localStorage.removeItem("gameSave");
+
+  game = structuredClone(defaultState); // ✅ RESET MEMORY TOO
+  index = 0;
+  autoInterval = null;
+
   location.reload();
 }
 
@@ -380,6 +384,7 @@ btn.addEventListener("click", () => {
   game.activeUniverse = next.name; // 👈 IMPORTANT
 
   load(next);
+  updateBossState();
 
   if (next.sound) {
     playSound(next.sound);
@@ -412,7 +417,6 @@ document.addEventListener("keydown", (e) => {
     saveGame();
     updateUI();
     updateProgress();
-    checkBoss();
 
     buffer = "";
   }
@@ -422,7 +426,6 @@ function initGame() {
   load(universes[index]);
   updateUI();
   updateProgress();
-  checkBoss(); // 🔥 IMPORTANT FIX
   if (game.upgrades.double) {
   const btn = document.getElementById("doubleBtn");
   btn.classList.add("disabled");
