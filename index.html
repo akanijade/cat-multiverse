@@ -23,8 +23,8 @@
       <h2 id="catCount">🐱 Cats: 0</h2>
       <div id="shop">
           <h3>🛒 Upgrade Shop</h3>
-          <button onclick="buyDouble()">Double Cats (10 🐱)</button>
-          <button onclick="buyAuto()">Auto Cats (25 🐱)</button>
+          <button id="doubleBtn" onclick="buyDouble()">Double Cats (10 🐱)</button>
+          <button id="autoBtn" onclick="buyAuto()">Auto Cats (25 🐱)</button>
       </div>
       <button id="bossBtn" onclick="loadBoss()" style="display:none;">
         👹 Show Boss
@@ -36,6 +36,7 @@
       <button onclick="resetGame()">🗑 Reset Game</button>
       <button onclick="exportSave()">💾 Export Save</button>
       <button onclick="importSave()">📥 Import Save</button>
+      <button onclick="startAuto()">Start Auto</button>
       <button onclick="stopAuto()">Stop Auto</button>
       <button onclick="playSound(universes[index].sound)">🔊 Play Sound</button>
       <button id="muteBtn" onclick="toggleMute()">🔊 Mute</button>

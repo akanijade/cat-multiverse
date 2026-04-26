@@ -151,3 +151,9 @@ body::before {
   background: linear-gradient(90deg, #ff9a9e, #fad0c4);
   transition: width 0.3s ease;
 }
+
+button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}

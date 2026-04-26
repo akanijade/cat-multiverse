@@ -80,17 +80,23 @@ function addCat(amount = 1) {
   game.points += amount * multiplier;
 
   saveGame();
+
   updateUI();
   updateProgress();
-  checkBoss();
+  checkBoss(); // 🔥 critical
 }
 
 function updateUI() {
   document.getElementById("catCount").textContent =
     `🐱 Cats: ${game.points}`;
 
-  document.getElementById("bossBtn").style.display =
-    game.points >= 100 ? "inline-block" : "none";
+  const bossBtn = document.getElementById("bossBtn");
+
+  if (game.points >= 100) {
+    bossBtn.style.display = "inline-block";
+  } else {
+    bossBtn.style.display = "none";
+  }
 }
 
 function unlockDouble() {
@@ -106,6 +112,11 @@ function buyDouble() {
 
     saveGame();
     updateUI();
+
+    const btn = document.getElementById("doubleBtn");
+    btn.classList.add("disabled");
+    btn.disabled = true;
+    btn.textContent = "✔ Owned (Double Cats)";
   }
 }
 
@@ -118,10 +129,17 @@ function buyAuto() {
     saveGame();
     updateUI();
 
-    autoInterval = setInterval(() => addCat(1), 2000);
+    alert("Auto Cats unlocked! Now press Start Auto.");
   }
 }
 
+function startAuto() {
+  if (!game.upgrades.auto || autoInterval) return;
+
+  autoInterval = setInterval(() => addCat(1), 2000);
+
+  document.querySelector('[onclick="startAuto()"]').textContent = "Auto Running...";
+}
 function stopAuto() {
   if (autoInterval) {
     clearInterval(autoInterval);
@@ -129,13 +147,31 @@ function stopAuto() {
   }
 }
 
-function getRarity() {
+function getRarity(catName = "") {
+  // FORCE special cats
+  if (catName.includes("GOD CAT")) return "MYTHIC";
+  if (catName.includes("CAT OVERLORD")) return "BOSS";
+
   let roll = Math.random();
   let sum = 0;
 
   for (let r of rarities) {
     sum += r.chance;
     if (roll < sum) return r.name;
+  }
+
+  return "Common";
+}
+function rarityStyle(rarity) {
+  switch (rarity) {
+    case "MYTHIC":
+      return "🔥 MYTHIC";
+    case "BOSS":
+      return "👑 BOSS";
+    case "Legendary":
+      return "✨ Legendary";
+    default:
+      return rarity;
   }
 }
 console.log("You found a", getRarity(), "cat!");
@@ -178,11 +214,9 @@ function checkBoss() {
   if (game.points >= 100 && !game.bossUnlocked) {
     game.bossUnlocked = true;
     saveGame();
-
-    document.getElementById("bossBtn").style.display = "inline-block";
-
-    // DON'T auto force boss anymore
   }
+
+  updateUI(); // 🔥 ensure UI sync every time
 }
 
 function loadBoss() {
@@ -222,7 +256,7 @@ function collectCat(catName) {
 
   game.collection.push({
     name: catName,
-    rarity: getRarity()
+    rarity: getRarity(catName)
   });
 
   saveGame();
@@ -292,7 +326,7 @@ function updateGallery() {
   const list = document.getElementById("catList");
 
   list.innerHTML = game.collection
-    .map(c => `🐱 ${c.name} (${c.rarity})`)
+    .map(c => `🐱 ${c.name} (${rarityStyle(c.rarity)})`)
     .join("<br>");
 }
 
@@ -358,6 +392,23 @@ function initGame() {
   updateUI();
   updateProgress();
   checkBoss(); // 🔥 IMPORTANT FIX
+  if (game.upgrades.double) {
+  const btn = document.getElementById("doubleBtn");
+  btn.classList.add("disabled");
+  btn.disabled = true;
+  btn.textContent = "✔ Owned (Double Cats)";
+}
+if (game.upgrades.auto) {
+  const btn = document.getElementById("autoBtn");
+  btn.classList.add("disabled");
+  btn.disabled = true;
+  btn.textContent = "✔ Owned (Auto Cats)";
+
+  // prevent duplicate intervals
+  if (!autoInterval) {
+    autoInterval = setInterval(() => addCat(1), 2000);
+  }
+}
 }
 
 initGame();
