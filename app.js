@@ -51,6 +51,7 @@ let cats = parseInt(localStorage.getItem("catPoints")) || 0;
 let lastTime = localStorage.getItem("lastTime");
 let bossUnlocked = false;
 let autoInterval = null;
+let isMuted = false;
 
 let doubleOwned = JSON.parse(localStorage.getItem("doubleOwned")) || false;
 let autoOwned = JSON.parse(localStorage.getItem("autoOwned")) || false;
@@ -232,12 +233,17 @@ function portal() {
 
 // 💾 collect cat
 function collectCat(catName) {
-  if (!collected.includes(catName)) {
-    collected.push(catName);
-    localStorage.setItem("cats", JSON.stringify(collected));
-    updateGallery(); // ✅ ADD THIS
-  }
+  let rarity = getRarity();
+
+  collected.push({
+    name: catName,
+    rarity: rarity
+  });
+
+  localStorage.setItem("cats", JSON.stringify(collected));
+  updateGallery();
 }
+
 
 // 🌠 load universe
 function load(u) {
@@ -263,17 +269,34 @@ function playSound(src) {
 
   audio.pause();
   audio.currentTime = 0;
+
   audio.src = src;
-  audio.volume = 0.4;
+  audio.load(); // 🔥 important for wav reliability
+  audio.volume = isMuted ? 0 : 0.4;
 
-  const playPromise = audio.play();
-
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {
-      console.log("🔇 Audio blocked until user interacts (click again).");
-    });
-  }
+  audio.play().catch(err => {
+    console.log("Audio blocked or failed:", err);
+  });
 }
+
+function toggleMute() {
+  isMuted = !isMuted;
+
+  if (isMuted) {
+    audio.pause();
+  }
+
+  document.getElementById("muteBtn").textContent =
+    isMuted ? "🔇 Unmute" : "🔊 Mute";
+}
+
+document.addEventListener("click", () => {
+  audio.play().then(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(() => {});
+}, { once: true });
+
 
 function updateProgress() {
   let percent = Math.min((cats / 100) * 100, 100);
