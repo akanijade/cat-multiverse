@@ -108,7 +108,7 @@ function updateUI() {
   // 🤖 Auto button reset when NOT running
   const autoBtn = document.getElementById("autoBtn");
   if (autoBtn && !autoInterval) {
-    autoBtn.textContent = "Auto Cats Paused";
+    autoBtn.textContent = "Upgrade Auto Cats";
   }
 }
 
@@ -141,7 +141,7 @@ function buyAuto() {
     saveGame();
     updateUI();
 
-    document.getElementById("autoBtn").textContent = "Start Auto Cats";
+    document.getElementById("autoBtn").textContent = "Auto Cats Upgraded";
   }
 }
 
