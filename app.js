@@ -41,7 +41,6 @@ const defaultState = {
     auto: false
   },
   bossMode: false,
-  bossTriggered: false   // ✅ ADD THIS
 };
 
 const skills = {
@@ -234,8 +233,7 @@ function importSave() {
 }
 
 function updateBossState() {
-  if (game.points >= 100 && !game.bossTriggered) {
-    game.bossTriggered = true;
+  if (game.points >= 100 && !game.bossMode) {
     game.bossMode = true;
     loadBoss();
   }
@@ -285,8 +283,7 @@ function collectCat(catName) {
 
 // 🌠 load universe
 function load(u) {
-  game.bossMode = false;
-  game.bossTriggered = false; // ✅ ADD HERE
+  game.bossMode = false; // ✅ ONLY THIS RESET
 
   game.activeUniverse = u.name;
   portal();
