@@ -90,12 +90,23 @@ function updateUI() {
   document.getElementById("catCount").textContent =
     `🐱 Cats: ${game.points}`;
 
-  const bossBtn = document.getElementById("bossBtn");
+  // 👑 Boss button
+  document.getElementById("bossBtn").style.display =
+    game.points >= 100 ? "inline-block" : "none";
 
-  if (game.points >= 100) {
-    bossBtn.style.display = "inline-block";
-  } else {
-    bossBtn.style.display = "none";
+  // 🧠 Double upgrade
+  const doubleBtn = document.getElementById("doubleBtn");
+  if (doubleBtn) {
+    doubleBtn.disabled = game.upgrades.double;
+    doubleBtn.textContent = game.upgrades.double
+      ? "✔ Owned (Double Cats)"
+      : "Double Cats (10 🐱)";
+  }
+
+  // 🤖 Auto button reset when NOT running
+  const autoBtn = document.getElementById("autoBtn");
+  if (autoBtn && !autoInterval) {
+    autoBtn.textContent = "Start Auto Cats";
   }
 }
 
@@ -120,7 +131,6 @@ function buyDouble() {
   }
 }
 
-
 function buyAuto() {
   if (game.points >= 25 && !game.upgrades.auto) {
     game.points -= 25;
@@ -129,21 +139,32 @@ function buyAuto() {
     saveGame();
     updateUI();
 
-    alert("Auto Cats unlocked! Now press Start Auto.");
+    document.getElementById("autoBtn").textContent = "Start Auto Cats";
   }
 }
 
 function startAuto() {
-  if (!game.upgrades.auto || autoInterval) return;
+  if (autoInterval) return;
 
   autoInterval = setInterval(() => addCat(1), 2000);
-
-  document.querySelector('[onclick="startAuto()"]').textContent = "Auto Running...";
 }
+
 function stopAuto() {
+  clearInterval(autoInterval);
+  autoInterval = null;
+
+  const btn = document.getElementById("autoBtn");
+  if (btn) btn.textContent = "Start Auto Cats";
+}
+function toggleAuto() {
+  const btn = document.getElementById("autoBtn");
+
   if (autoInterval) {
-    clearInterval(autoInterval);
-    autoInterval = null;
+    stopAuto();
+    btn.textContent = "Start Auto Cats";
+  } else {
+    startAuto();
+    btn.textContent = "Auto Running...";
   }
 }
 
@@ -213,14 +234,19 @@ function importSave() {
 function checkBoss() {
   if (game.points >= 100 && !game.bossUnlocked) {
     game.bossUnlocked = true;
-    saveGame();
-  }
 
-  updateUI(); // 🔥 ensure UI sync every time
+    game.points += 1; // ✅ boss reward
+
+    saveGame();
+    updateUI();
+    updateProgress();
+
+    document.getElementById("bossBtn").style.display = "inline-block";
+  }
 }
 
 function loadBoss() {
-  if (game.points < 100) return;
+  if (game.points < 100) return; // 🔒 BLOCK EARLY ACCESS
 
   load({
     name: "👑 CAT OVERLORD",
@@ -374,6 +400,8 @@ document.addEventListener("keydown", (e) => {
   buffer = buffer.slice(-10);
 
   if (buffer.includes("cats")) {
+    game.points += 1;
+
     load({
       name: "⭐ GOD CAT REALM",
       color: "#1a001f",
@@ -382,6 +410,11 @@ document.addEventListener("keydown", (e) => {
       image: "images/cat5.png",
       sound: null
     });
+
+    saveGame();
+    updateUI();
+    updateProgress();
+    checkBoss();
 
     buffer = "";
   }
@@ -398,16 +431,8 @@ function initGame() {
   btn.disabled = true;
   btn.textContent = "✔ Owned (Double Cats)";
 }
-if (game.upgrades.auto) {
-  const btn = document.getElementById("autoBtn");
-  btn.classList.add("disabled");
-  btn.disabled = true;
-  btn.textContent = "✔ Owned (Auto Cats)";
-
-  // prevent duplicate intervals
-  if (!autoInterval) {
-    autoInterval = setInterval(() => addCat(1), 2000);
-  }
+if (game.upgrades.auto && !autoInterval) {
+  startAuto();
 }
 }
 
