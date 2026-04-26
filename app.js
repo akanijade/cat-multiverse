@@ -155,17 +155,17 @@ function stopAuto() {
   autoInterval = null;
 
   const btn = document.getElementById("autoBtn");
-  if (btn) btn.textContent = "Start Auto Cats";
+  if (btn) btn.textContent = "Auto Cats Paused";
 }
 function toggleAuto() {
   const btn = document.getElementById("autoBtn");
 
   if (autoInterval) {
     stopAuto();
-    btn.textContent = "Start Auto Cats";
+    btn.textContent = "Auto Cats Paused";
   } else {
     startAuto();
-    btn.textContent = "Auto Running...";
+    btn.textContent = "Auto Cats Running...";
   }
 }
 
@@ -381,7 +381,6 @@ btn.addEventListener("click", () => {
   game.activeUniverse = next.name; // 👈 IMPORTANT
 
   load(next);
-  updateBossState();
 
   if (next.sound) {
     playSound(next.sound);
