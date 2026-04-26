@@ -33,6 +33,15 @@ const universes = [
   }
 ];
 
+const defaultState = {
+  points: 0,
+  collection: [],
+  upgrades: {
+    double: false,
+    auto: false
+  },
+  bossUnlocked: false
+};
 const skills = {
   doubleCats: false,
   autoCollector: false
@@ -46,19 +55,12 @@ const rarities = [
 ];
 
 let index = 0;
-let collected = JSON.parse(localStorage.getItem("cats")) || [];
-let cats = parseInt(localStorage.getItem("catPoints")) || 0;
 let lastTime = localStorage.getItem("lastTime");
-let bossUnlocked = false;
 let autoInterval = null;
 let isMuted = false;
+let game = loadGame();
 
-let doubleOwned = JSON.parse(localStorage.getItem("doubleOwned")) || false;
-let autoOwned = JSON.parse(localStorage.getItem("autoOwned")) || false;
 
-if (autoOwned) {
-  autoInterval = setInterval(() => addCat(1), 2000);
-}
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -68,19 +70,24 @@ const app = document.getElementById("app");
 
 const audio = new Audio();
 
+if (game.upgrades.auto) {
+  autoInterval = setInterval(() => addCat(1), 2000);
+}
 
 function addCat(amount = 1) {
-  let multiplier = doubleOwned ? 2 : 1;
-  cats += amount * multiplier;
+  let multiplier = game.upgrades.double ? 2 : 1;
 
-  localStorage.setItem("catPoints", cats);
+  game.points += amount * multiplier;
+
+  saveGame();
   updateUI();
-  checkBoss();
   updateProgress();
+  checkBoss();
 }
 
 function updateUI() {
-  document.getElementById("catCount").textContent = `🐱 Cats: ${cats}`;
+  document.getElementById("catCount").textContent =
+    `🐱 Cats: ${game.points}`;
 }
 
 function unlockDouble() {
@@ -90,29 +97,25 @@ function unlockDouble() {
 }
 
 function buyDouble() {
-  if (cats >= 10 && !doubleOwned) {
-    cats -= 10;
-    doubleOwned = true;
+  if (game.points >= 10 && !game.upgrades.double) {
+    game.points -= 10;
+    game.upgrades.double = true;
 
-    localStorage.setItem("doubleOwned", true);
-
+    saveGame();
     updateUI();
   }
 }
 
 
 function buyAuto() {
-  if (cats >= 25 && !autoOwned) {
-    cats -= 25;
-    autoOwned = true;
+  if (game.points >= 25 && !game.upgrades.auto) {
+    game.points -= 25;
+    game.upgrades.auto = true;
 
-    localStorage.setItem("autoOwned", true);
-
-    if (!autoInterval) {
-      autoInterval = setInterval(() => addCat(1), 2000);
-    }
-
+    saveGame();
     updateUI();
+
+    setInterval(() => addCat(1), 2000);
   }
 }
 
@@ -151,52 +154,27 @@ calculateOffline();
 
 
 function exportSave() {
-  const save = {
-    cats,
-    collected,
-    doubleOwned,
-    autoOwned,
-    bossUnlocked
-  };
-
-  const encoded = btoa(JSON.stringify(save));
-  prompt("Copy your save:", encoded);
+  prompt("Copy save:", btoa(JSON.stringify(game)));
 }
 
 function importSave() {
-  let data = prompt("Paste save code:");
+  let data = prompt("Paste save:");
   if (!data) return;
 
-  try {
-    let save = JSON.parse(atob(data));
+  game = JSON.parse(atob(data));
+  saveGame();
 
-    cats = save.cats || 0;
-    collected = save.collected || [];
-    doubleOwned = save.doubleOwned || false;
-    autoOwned = save.autoOwned || false;
-    bossUnlocked = save.bossUnlocked || false;
-
-    localStorage.setItem("catPoints", cats);
-    localStorage.setItem("cats", JSON.stringify(collected));
-    localStorage.setItem("doubleOwned", doubleOwned);
-    localStorage.setItem("autoOwned", autoOwned);
-
-    updateUI();
-    updateGallery();
-    updateProgress();
-
-    alert("Save loaded!");
-  } catch (e) {
-    alert("Invalid save code.");
-  }
+  updateUI();
+  updateGallery();
+  updateProgress();
 }
 
 function checkBoss() {
-  if (cats >= 100 && !bossUnlocked) {
-    bossUnlocked = true;
+  if (game.points >= 100 && !game.bossUnlocked) {
+    game.bossUnlocked = true;
+    saveGame();
 
     document.getElementById("bossBtn").style.display = "inline-block";
-
     loadBoss();
   }
 }
@@ -233,17 +211,16 @@ function portal() {
 
 // 💾 collect cat
 function collectCat(catName) {
-  let rarity = getRarity();
+  if (game.collection.find(c => c.name === catName)) return;
 
-  collected.push({
+  game.collection.push({
     name: catName,
-    rarity: rarity
+    rarity: getRarity()
   });
 
-  localStorage.setItem("cats", JSON.stringify(collected));
+  saveGame();
   updateGallery();
 }
-
 
 // 🌠 load universe
 function load(u) {
@@ -257,7 +234,7 @@ function load(u) {
   lore.textContent = u.lore;
   catImage.src = u.image;
 
-  collectCat(u.name);
+  if (!game.collection.find(c => c.name === u.name))
 
   if (u.sound) {
     playSound(u.sound);
@@ -309,16 +286,25 @@ function updateProgress() {
 function updateGallery() {
   const list = document.getElementById("catList");
 
-  list.innerHTML = collected
-    .map(c => `<p>🐱 ${c.name} (${c.rarity})</p>`)
-    .join("");
+  list.innerHTML = game.collection
+    .map(c => `🐱 ${c.name} (${c.rarity})`)
+    .join("<br>");
 }
 
 function resetGame() {
-  if (!confirm("Reset your progress?")) return;
+  if (!confirm("Reset EVERYTHING?")) return;
 
-  localStorage.clear();
+  localStorage.removeItem("gameSave");
   location.reload();
+}
+
+function loadGame() {
+  let saved = localStorage.getItem("gameSave");
+  return saved ? JSON.parse(saved) : structuredClone(defaultState);
+}
+
+function saveGame() {
+  localStorage.setItem("gameSave", JSON.stringify(game));
 }
 
 btn.addEventListener("click", () => {
