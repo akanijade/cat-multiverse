@@ -68,17 +68,6 @@ const app = document.getElementById("app");
 const audio = new Audio();
 
 
-// if (cats > 50) {
-//   load({
-//     name: "FINAL BOSS CAT",
-//     color: "#200000",
-//     textColor: "#ff0000",
-//     lore: "You have awakened the Cat Overlord.",
-//     image: "images/bosscat.png"
-//   });
-// }
-
-
 function addCat(amount = 1) {
   let multiplier = doubleOwned ? 2 : 1;
   cats += amount * multiplier;
@@ -143,7 +132,7 @@ function calculateOffline() {
   let diff = Date.now() - lastTime;
   let seconds = Math.floor(diff / 1000);
 
-  let earned = Math.floor(seconds * 0.2);
+  let earned = Math.min(Math.floor(seconds * 0.2), 500);
   if (earned > 0) addCat(earned);
 }
 
@@ -157,32 +146,44 @@ calculateOffline();
 function exportSave() {
   const save = {
     cats,
+    collected,
     doubleOwned,
-    autoOwned
+    autoOwned,
+    bossUnlocked
   };
 
-  prompt("Copy your save:", btoa(JSON.stringify(save)));
+  const encoded = btoa(JSON.stringify(save));
+  prompt("Copy your save:", encoded);
 }
-
 
 function importSave() {
   let data = prompt("Paste save code:");
   if (!data) return;
 
-  let save = JSON.parse(atob(data));
+  try {
+    let save = JSON.parse(atob(data));
 
-  cats = save.cats;
-  doubleOwned = save.doubleOwned;
-  autoOwned = save.autoOwned;
+    cats = save.cats || 0;
+    collected = save.collected || [];
+    doubleOwned = save.doubleOwned || false;
+    autoOwned = save.autoOwned || false;
+    bossUnlocked = save.bossUnlocked || false;
 
-  updateUI();
+    localStorage.setItem("catPoints", cats);
+    localStorage.setItem("cats", JSON.stringify(collected));
+    localStorage.setItem("doubleOwned", doubleOwned);
+    localStorage.setItem("autoOwned", autoOwned);
+
+    updateUI();
+    updateGallery();
+    updateProgress();
+
+    alert("Save loaded!");
+  } catch (e) {
+    alert("Invalid save code.");
+  }
 }
 
-// function checkUnlocks() {
-//   if (cats > 100) {
-//     loadBoss();
-//   }
-// }
 function checkBoss() {
   if (cats >= 100 && !bossUnlocked) {
     bossUnlocked = true;
@@ -286,6 +287,12 @@ function updateGallery() {
   list.innerHTML = collected.map(c => `<p>🐱 ${c}</p>`).join("");
 }
 
+function resetGame() {
+  if (!confirm("Reset your progress?")) return;
+
+  localStorage.clear();
+  location.reload();
+}
 
 btn.addEventListener("click", () => {
   addCat();
@@ -298,7 +305,7 @@ btn.addEventListener("click", () => {
 let secretCode = "";
 document.addEventListener("keydown", (e) => {
   secretCode += e.key.toLowerCase();
-  if (secretCode.includes("cats")) {
+  if (secretCode.includes("Y2F0cw==")) {
     load({
       name: "⭐ GOD CAT REALM",
       color: "#1a001f",
