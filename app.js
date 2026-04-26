@@ -33,8 +33,14 @@ const universes = [
   }
 ];
 
+const skills = {
+  doubleCats: false,
+  autoCollector: false
+};
+
 let index = 0;
 let collected = JSON.parse(localStorage.getItem("cats")) || [];
+let cats = parseInt(localStorage.getItem("catPoints")) || 0;
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -44,6 +50,36 @@ const app = document.getElementById("app");
 
 const audio = new Audio();
 
+if (cats > 50) {
+  load({
+    name: "FINAL BOSS CAT",
+    color: "#200000",
+    textColor: "#ff0000",
+    lore: "You have awakened the Cat Overlord.",
+    image: "images/bosscat.png"
+  });
+}
+
+// function addCat() {
+//   cats++;
+//   localStorage.setItem("catPoints", cats);
+//   updateUI();
+// }
+function addCat(amount = 1) {
+  cats += amount;
+  localStorage.setItem("catPoints", cats);
+  updateUI();
+}
+
+function unlockDouble() {
+  if (cats >= 10) {
+    skills.doubleCats = true;
+  }
+}
+
+// function addCat() {
+//   cats += skills.doubleCats ? 2 : 1;
+// }
 // 🌌 glitch effect
 function glitch() {
   document.body.style.filter = "contrast(2) brightness(0.8) hue-rotate(90deg)";
@@ -85,16 +121,40 @@ function load(u) {
 
   collectCat(u.name);
 
-  // sound (optional, won’t break if missing)
+  // // sound (optional, won’t break if missing)
+  // if (u.sound) {
+  //   audio.src = u.sound;
+  //   audio.volume = 0.4;
+  //   audio.play().catch(() => {});
+  // }
   if (u.sound) {
-    audio.src = u.sound;
-    audio.volume = 0.4;
-    audio.play().catch(() => {});
+    playSound(u.sound);
   }
 }
 
+// const audio = new Audio();
+
+function playSound(src) {
+  if (!src) return;
+
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = src;
+
+  audio.volume = 0.4;
+
+  audio.play().catch(() => {
+    console.log("Audio blocked until user interacts.");
+  });
+}
+
 // click
+// btn.addEventListener("click", () => {
+//   index = (index + 1) % universes.length;
+//   load(universes[index]);
+// });
 btn.addEventListener("click", () => {
+  addCat();
   index = (index + 1) % universes.length;
   load(universes[index]);
 });
