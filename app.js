@@ -41,6 +41,7 @@ const defaultState = {
     auto: false
   },
   bossMode: false,
+  bossTriggered: false
 };
 
 const skills = {
@@ -233,8 +234,11 @@ function importSave() {
 }
 
 function updateBossState() {
-  if (game.points >= 100 && !game.bossMode) {
+  // ONLY trigger once when crossing 100
+  if (game.points >= 100 && !game.bossTriggered) {
+    game.bossTriggered = true;
     game.bossMode = true;
+
     loadBoss();
   }
 }
@@ -247,6 +251,11 @@ function loadBoss() {
     image: "images/boss.png",
     sound: "sounds/boss.wav"
   });
+}
+
+function showBoss() {
+  game.bossMode = true;
+  loadBoss();
 }
 
 // 🌌 glitch effect
