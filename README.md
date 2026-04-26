@@ -1,4 +1,4 @@
-# 🐱 Cat Multiverse Explorer (Idle Clicker Game)
+# 🐱 Cat Multiverse Explorer 
 
 A fun incremental game where you explore cat universes, collect cats, and unlock hidden bosses.
 
