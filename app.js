@@ -281,6 +281,11 @@ function updateProgress() {
     `Boss Progress: ${cats}/100`;
 }
 
+function updateGallery() {
+  const list = document.getElementById("catList");
+  list.innerHTML = collected.map(c => `<p>🐱 ${c}</p>`).join("");
+}
+
 
 btn.addEventListener("click", () => {
   addCat();
