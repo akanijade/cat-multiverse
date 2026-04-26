@@ -210,9 +210,7 @@ function loadBoss() {
     image: "images/boss.png"
   });
 }
-// function addCat() {
-//   cats += skills.doubleCats ? 2 : 1;
-// }
+
 // 🌌 glitch effect
 function glitch() {
   document.body.style.filter = "contrast(2) brightness(0.8) hue-rotate(90deg)";
@@ -255,12 +253,6 @@ function load(u) {
 
   collectCat(u.name);
 
-  // // sound (optional, won’t break if missing)
-  // if (u.sound) {
-  //   audio.src = u.sound;
-  //   audio.volume = 0.4;
-  //   audio.play().catch(() => {});
-  // }
   if (u.sound) {
     playSound(u.sound);
   }
@@ -314,7 +306,7 @@ btn.addEventListener("click", () => {
 let buffer = "";
 
 document.addEventListener("keydown", (e) => {
-  if (e.key.length !== 1) return; // ignore Shift, Ctrl, etc.
+  if (e.key.length !== 1) return;
 
   buffer += e.key.toLowerCase();
   buffer = buffer.slice(-10);

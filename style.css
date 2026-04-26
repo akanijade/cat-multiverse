@@ -3,23 +3,17 @@
 body {
   margin: 0;
   font-family: "Fredoka", Arial, sans-serif;
-  text-align: center;
-  transition: background 0.5s ease, color 0.5s ease;
   min-height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Main container */
 #app {
+  width: 100%;
+  min-height: 100vh;
   padding: 40px;
-  max-width: 500px;
-  border-radius: 20px;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 /* Title */
