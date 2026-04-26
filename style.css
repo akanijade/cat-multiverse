@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: "Fredoka", Arial, sans-serif;
+  text-align: center;
+  transition: background 0.5s ease, color 0.5s ease;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main container */
+#app {
+  padding: 40px;
+  max-width: 500px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Title */
+h1 {
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+/* Lore text */
+#lore {
+  font-size: 16px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+/* Cat image */
+#catImage {
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 25px;
+  margin: 20px 0;
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* ✨ Cute button */
+button {
+  padding: 12px 22px;
+  font-size: 16px;
+  font-family: "Fredoka", sans-serif;
+
+  border: none;
+  border-radius: 999px;
+
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  color: #222;
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+button:active {
+  transform: scale(0.97);
+}
