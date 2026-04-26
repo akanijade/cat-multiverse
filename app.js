@@ -118,13 +118,15 @@ function buyAuto() {
     saveGame();
     updateUI();
 
-    setInterval(() => addCat(1), 2000);
+    autoInterval = setInterval(() => addCat(1), 2000);
   }
 }
 
 function stopAuto() {
-  clearInterval(autoInterval);
-  autoInterval = null;
+  if (autoInterval) {
+    clearInterval(autoInterval);
+    autoInterval = null;
+  }
 }
 
 function getRarity() {
@@ -184,7 +186,7 @@ function checkBoss() {
 }
 
 function loadBoss() {
-  if (game.points < 100) return; // 🔥 BLOCK CHEAT ENTRY
+  if (game.points < 100) return;
 
   load({
     name: "👑 CAT OVERLORD",
@@ -355,6 +357,7 @@ function initGame() {
   load(universes[index]);
   updateUI();
   updateProgress();
+  checkBoss(); // 🔥 IMPORTANT FIX
 }
 
 initGame();
