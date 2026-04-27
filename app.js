@@ -33,6 +33,8 @@ const universes = [
   }
 ];
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 const defaultState = {
   points: 0,
   collection: [],
@@ -62,7 +64,8 @@ let autoInterval = null;
 let isMuted = false;
 let game = loadGame();
 
-
+let tapCount = 0;
+let tapTimer = null;
 
 const title = document.getElementById("title");
 const lore = document.getElementById("lore");
@@ -412,23 +415,58 @@ document.addEventListener("keydown", (e) => {
   buffer = buffer.slice(-10);
 
   if (buffer.includes("cats")) {
-    game.points += 1;
-
-    load({
-      name: "⭐ GOD CAT REALM",
-      color: "#1a001f",
-      textColor: "#ff00ff",
-      lore: "You unlocked the origin of all cats.",
-      image: "images/cat5.png",
-      sound: "sounds/secret.wav"
-    });
-
-    saveGame();
-    updateUI();
-    updateProgress();
+    unlockSecret();
 
     buffer = "";
   }
+});
+
+function unlockSecret() {
+  game.points += 1;
+
+  load({
+    name: "⭐ GOD CAT REALM",
+    color: "#1a001f",
+    textColor: "#ff00ff",
+    lore: "You unlocked the origin of all cats.",
+    image: "images/cat5.png",
+    sound: "sounds/secret.wav"
+  });
+
+  saveGame();
+  updateUI();
+  updateProgress();
+}
+
+btn.addEventListener("click", () => {
+  addCat();
+
+  // 🔥 MOBILE SECRET (tap 5 times fast)
+  if (isMobile) {
+    tapCount++;
+
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => {
+      tapCount = 0; // reset if too slow
+    }, 1000); // 1 second window
+
+    if (tapCount >= 3) {
+      unlockSecret();
+      tapCount = 0;
+    }
+  }
+
+  // 🌌 normal universe switching
+  index = (index + 1) % universes.length;
+  const next = universes[index];
+
+  load(next);
+
+  if (next.sound) {
+    playSound(next.sound);
+  }
+
+  saveGame();
 });
 
 function initGame() {
