@@ -388,22 +388,6 @@ function saveGame() {
   localStorage.setItem("gameSave", JSON.stringify(game));
 }
 
-btn.addEventListener("click", () => {
-  addCat();
-
-  index = (index + 1) % universes.length;
-  const next = universes[index];
-
-  game.activeUniverse = next.name; // 👈 IMPORTANT
-
-  load(next);
-
-  if (next.sound) {
-    playSound(next.sound);
-  }
-
-  saveGame();
-});
 
 // secret universe unlock (press CATS)
 let buffer = "";
@@ -450,7 +434,7 @@ btn.addEventListener("click", () => {
       tapCount = 0; // reset if too slow
     }, 1000); // 1 second window
 
-    if (tapCount >= 3) {
+    if (tapCount >= 5) {
       unlockSecret();
       tapCount = 0;
     }
