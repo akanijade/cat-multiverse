@@ -437,6 +437,7 @@ btn.addEventListener("click", () => {
     if (tapCount >= 5) {
       unlockSecret();
       tapCount = 0;
+      return;
     }
   }
 
