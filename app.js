@@ -110,7 +110,7 @@ function updateUI() {
   if (autoBtn && !autoInterval) {
     autoBtn.textContent = game.upgrades.auto
     ? "Auto Cats Owned"
-    : "Upgrade Auto Cats";
+    : "Upgrade Auto Cats (25 🐱)";
   }
 }
 
