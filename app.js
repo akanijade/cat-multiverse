@@ -108,6 +108,7 @@ function updateUI() {
   // 🤖 Auto button reset when NOT running
   const autoBtn = document.getElementById("autoBtn");
   if (autoBtn && !autoInterval) {
+    doubleBtn.disabled = game.upgrades.auto;
     autoBtn.textContent = game.upgrades.auto
     ? "Auto Cats Owned"
     : "Upgrade Auto Cats (25 🐱)";
