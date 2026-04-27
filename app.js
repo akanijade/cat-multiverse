@@ -108,7 +108,9 @@ function updateUI() {
   // 🤖 Auto button reset when NOT running
   const autoBtn = document.getElementById("autoBtn");
   if (autoBtn && !autoInterval) {
-    autoBtn.textContent = "Upgrade Auto Cats";
+    autoBtn.textContent = game.upgrades.auto
+    ? "Auto Cats Owned"
+    : "Upgrade Auto Cats";
   }
 }
 
@@ -286,8 +288,9 @@ function collectCat(catName) {
     rarity: getRarity(catName)
   });
 
-  saveGame();
   updateGallery();
+  saveGame();
+
 }
 
 // 🌠 load universe
@@ -382,7 +385,7 @@ function saveGame() {
 }
 
 btn.addEventListener("click", () => {
-  
+  addCat();
 
   index = (index + 1) % universes.length;
   const next = universes[index];
@@ -394,7 +397,7 @@ btn.addEventListener("click", () => {
   if (next.sound) {
     playSound(next.sound);
   }
-  addCat();
+
   saveGame();
 });
 
@@ -440,6 +443,8 @@ function initGame() {
 if (game.upgrades.auto && !autoInterval) {
   startAuto();
 }
+  updateGallery(); // 👈 ADD THIS
+
 }
 
 initGame();
