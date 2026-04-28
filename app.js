@@ -113,8 +113,8 @@ function updateUI() {
   if (autoBtn && !autoInterval) {
     doubleBtn.disabled = game.upgrades.auto;
     autoBtn.textContent = game.upgrades.auto
-    ? "Auto Cats Owned"
-    : "Upgrade Auto Cats (25 🐱)";
+    ? "Auto Collector Owned"
+    : "Upgrade Auto Collector (25 🐱)";
   }
 }
 
@@ -147,7 +147,7 @@ function buyAuto() {
     saveGame();
     updateUI();
 
-    document.getElementById("autoBtn").textContent = "Auto Cats Upgraded";
+    document.getElementById("autoBtn").textContent = "Auto Collector Upgraded";
   }
 }
 
@@ -162,17 +162,17 @@ function stopAuto() {
   autoInterval = null;
 
   const btn = document.getElementById("autoBtn");
-  if (btn) btn.textContent = "Auto Cats Paused";
+  if (btn) btn.textContent = "Auto Collector Paused";
 }
 function toggleAuto() {
   const btn = document.getElementById("autoBtn");
 
   if (autoInterval) {
     stopAuto();
-    btn.textContent = "Auto Cats Paused";
+    btn.textContent = "Auto Collector Paused";
   } else {
     startAuto();
-    btn.textContent = "Auto Cats Running...";
+    btn.textContent = "Auto Collector Running...";
   }
 }
 
